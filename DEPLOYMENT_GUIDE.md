@@ -99,8 +99,8 @@ git push origin main
 ```
 1. Go to GitHub → Actions tab
 2. Watch "Azure Static Web Apps CI/CD" workflow
-3. When complete, Azure Portal shows deployment URL
-4. Example: https://xyz123.azurestaticapps.net/
+3. When complete, Azure Portal shows the live site URL
+4. Live site: https://gentle-bush-041c4050f.7.azurestaticapps.net/ (deployed)
 ```
 
 ---
@@ -299,6 +299,8 @@ After deployment, monitor:
 
 ---
 
-**Document Version**: 1.0
-**Last Updated**: 2026-07-17
+**Document Version**: 1.1
+**Last Updated**: 2026-07-18
 **Ready for Deployment**: ✅ YES
+
+Live site: https://gentle-bush-041c4050f.7.azurestaticapps.net/

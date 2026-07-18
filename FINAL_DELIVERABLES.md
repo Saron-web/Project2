@@ -1,5 +1,7 @@
 # Person 3 - Final Deliverables Summary
 
+A short, practical summary of what was done, what's live, and what to check next. Everything below is written for a person — no AI fluff.
+
 ## ✅ Completed Work
 
 ### 1. Frontend Integration ✅
@@ -190,7 +192,7 @@ const res = await fetch(url, {
 | CI/CD automation | GitHub Actions workflow | `.github/workflows/` | ✅ Complete |
 | Test E2E flow | Verify full pipeline | Testing checklist | ✅ Complete |
 | Documentation | Provide live URL | `DEPLOYMENT_GUIDE.md` | ✅ Complete |
-| Live dashboard | Publicly accessible | Ready for deployment | ⏳ Pending |
+| Live dashboard | Publicly accessible | Deployed | https://gentle-bush-041c4050f.7.azurestaticapps.net |
 
 ---
 
@@ -388,7 +390,7 @@ Project2/
 
 **Status**: ✅ READY FOR PRODUCTION DEPLOYMENT
 
-**Next Action**: Deploy to Azure Static Web Apps and update live URL
+**Next Action**: Monitor the live site for 24–48 hours and share the URL with stakeholders
 
-**Date Completed**: 2026-07-17
+**Date Completed**: 2026-07-18
 **Person 3 Deliverables**: COMPLETE
