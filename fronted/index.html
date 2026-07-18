@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <!-- Tailwind CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
 </head>
+
 <body class="bg-gray-100">
 
     <header class="bg-blue-600 p-4 text-white">
@@ -49,11 +51,15 @@
         <section class="mb-8">
             <h2 class="text-2xl font-semibold mb-4">Filters and Data Interaction</h2>
             <div class="flex flex-wrap gap-4">
-                <input id="dietSearch" type="text" placeholder="Search by Diet Type" class="p-2 border rounded w-full sm:w-auto">
+                <input id="dietSearch" type="text" placeholder="Search by Diet Type"
+                    class="p-2 border rounded w-full sm:w-auto">
                 <select id="dietSelect" class="p-2 border rounded w-full sm:w-auto">
                     <option value="all">All Diet Types</option>
                     <option value="vegan">Vegan</option>
                     <option value="keto">Keto</option>
+                    <option value="mediterranean">Mediterranean</option>
+                    <option value="dash">DASH</option>
+                    <option value="paleo">Paleo</option>
                 </select>
             </div>
         </section>
@@ -61,7 +67,8 @@
         <section class="mb-8">
             <h2 class="text-2xl font-semibold mb-4">API Data Interaction</h2>
             <div class="flex flex-wrap gap-4">
-                <button id="btnInsights" class="bg-blue-600 text-white py-2 px-4 rounded">Get Nutritional Insights</button>
+                <button id="btnInsights" class="bg-blue-600 text-white py-2 px-4 rounded">Get Nutritional
+                    Insights</button>
                 <button id="btnRecipes" class="bg-green-600 text-white py-2 px-4 rounded">Get Recipes</button>
                 <button id="btnClusters" class="bg-purple-600 text-white py-2 px-4 rounded">Get Clusters</button>
             </div>
@@ -87,4 +94,5 @@
     <script src="./script.js"></script>
 
 </body>
+
 </html>
