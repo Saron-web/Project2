@@ -1,4 +1,4 @@
-const FUNCTION_URL = "https://rishabh-diet-function-2026-crh8cfbxfhhybmf4.mexicocentral-01.azurewebsites.net/api/get_nutritional_insights";
+﻿const FUNCTION_URL = "https://rishabh-diet-function-2026-crh8cfbxfhhybmf4.mexicocentral-01.azurewebsites.net/api/get_nutritional_insights";
 const barCanvas = document.getElementById("barChart");
 const scatterCanvas = document.getElementById("scatterPlot");
 const pieCanvas = document.getElementById("pieChart");
@@ -9,13 +9,11 @@ const dietSearch = document.getElementById("dietSearch");
 const dietSelect = document.getElementById("dietSelect");
 const btnInsights = document.getElementById("btnInsights");
 
-// fetch data from backend
 async function fetchInsights() {
   try {
     metadataEl.textContent = "Loading insights...";
     const url = new URL(FUNCTION_URL);
 
-    // Set query params if they are not default
     const selectedDiet = dietSelect.value;
     if (selectedDiet && selectedDiet !== "all") {
       url.searchParams.set("dietType", selectedDiet);
@@ -42,7 +40,6 @@ async function fetchInsights() {
     const data = await res.json();
     console.log("Data received:", data);
 
-    // Format check / default values in case of missing keys
     const barData = data.barData || { labels: [], values: [] };
     const scatterData = data.scatterData || { points: [] };
     const pieData = data.pieData || { labels: [], values: [] };
@@ -109,7 +106,6 @@ let scatterChartInstance;
 function renderScatterChart(scatterData) {
   if (scatterChartInstance) scatterChartInstance.destroy();
 
-  // Format points to ensure they match {x, y}
   const points = (scatterData.points || []).map(p => ({ x: p.x, y: p.y }));
 
   scatterChartInstance = new Chart(scatterCanvas, {
@@ -175,20 +171,18 @@ function renderHeatmap(heatmapData) {
   const labels = ["Calories", "Protein", "Fat"];
   let html = `<table class="w-full h-full text-xs text-center border-collapse">`;
 
-  // Header row
   html += `<thead><tr><th class="p-1 border border-gray-300 bg-gray-50"></th>`;
   labels.forEach(label => {
     html += `<th class="p-1 border border-gray-300 bg-gray-50 font-semibold">${label}</th>`;
   });
   html += `</tr></thead><tbody>`;
 
-  // Data rows
   for (let i = 0; i < heatmapData.length; i++) {
     html += `<tr><td class="p-1 border border-gray-300 bg-gray-50 font-semibold text-left">${labels[i] || `Var ${i + 1}`}</td>`;
     for (let j = 0; j < heatmapData[i].length; j++) {
       const val = heatmapData[i][j];
       const absVal = Math.abs(val);
-      // Determine background color based on correlation strength (positive/negative)
+
       let bgColor = "rgba(239, 68, 68, 0)"; // Transparent for 0
       if (val > 0) {
         bgColor = `rgba(37, 99, 235, ${absVal})`; // Blue for positive correlation
@@ -208,7 +202,6 @@ function renderMetadata(executionTime) {
   metadataEl.textContent = `Execution time: ${executionTime}`;
 }
 
-// Event Listeners for dynamic updates
 btnInsights.addEventListener("click", () => {
   console.log("Getting nutritional insights...");
   fetchInsights();
@@ -219,7 +212,6 @@ dietSelect.addEventListener("change", () => {
   fetchInsights();
 });
 
-// Use debounce or search keyup event for input search
 let searchTimeout;
 dietSearch.addEventListener("input", () => {
   clearTimeout(searchTimeout);
@@ -229,7 +221,6 @@ dietSearch.addEventListener("input", () => {
   }, 400); // 400ms debounce
 });
 
-// Setup fallback or other button handlers
 document.getElementById("btnRecipes").addEventListener("click", () => {
   alert("Recipes functionality is connected and fetched via the dynamic filters dashboard!");
 });
@@ -238,8 +229,8 @@ document.getElementById("btnClusters").addEventListener("click", () => {
   alert("Clusters visualization and insights are integrated into the scatter and heatmap diagrams!");
 });
 
-// initial load
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Dashboard loaded. Fetching initial data...");
   fetchInsights();
 });
+

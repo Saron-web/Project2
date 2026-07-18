@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -97,7 +97,7 @@
         <h1>🔍 Azure Function API Test Suite</h1>
         <p>Test the connection to the Azure Function and verify data flow.</p>
 
-        <!-- Connection Test -->
+        
         <div class="test-section">
             <h2>1. Connection Test</h2>
             <p>Verify the Azure Function endpoint is reachable.</p>
@@ -106,7 +106,7 @@
             <div id="connectionStatus" class="status" style="display:none;"></div>
         </div>
 
-        <!-- Basic API Call -->
+        
         <div class="test-section">
             <h2>2. Basic API Call (No Filters)</h2>
             <p>Fetch nutritional insights without any filters.</p>
@@ -115,7 +115,7 @@
             <div id="basicStatus" class="status" style="display:none;"></div>
         </div>
 
-        <!-- Filtered API Call -->
+        
         <div class="test-section">
             <h2>3. Filtered API Call</h2>
             <p>Test with diet type filter.</p>
@@ -135,7 +135,7 @@
             <div id="filteredStatus" class="status" style="display:none;"></div>
         </div>
 
-        <!-- Data Validation -->
+        
         <div class="test-section">
             <h2>4. Data Structure Validation</h2>
             <p>Verify the response contains all required fields.</p>
@@ -144,7 +144,7 @@
             <div id="structureStatus" class="status" style="display:none;"></div>
         </div>
 
-        <!-- Chart Rendering -->
+        
         <div class="test-section">
             <h2>5. Chart Rendering Test</h2>
             <p>Render charts with the received data.</p>
@@ -171,7 +171,7 @@
             </div>
         </div>
 
-        <!-- Full E2E Test -->
+        
         <div class="test-section">
             <h2>6. Full End-to-End Test</h2>
             <p>Run all tests in sequence.</p>
@@ -180,7 +180,7 @@
             <div id="fullStatus" class="status" style="display:none;"></div>
         </div>
 
-        <!-- Console -->
+        
         <div class="test-section">
             <h2>Console Output</h2>
             <div id="console" class="output" style="background-color: #1e1e1e; color: #d4d4d4;">
@@ -278,7 +278,6 @@
                 const response = await fetch(FUNCTION_URL);
                 const data = await response.json();
 
-                // Bar Chart
                 const barCanvas = document.getElementById('barChartTest');
                 new Chart(barCanvas, {
                     type: 'bar',
@@ -292,7 +291,6 @@
                     }
                 });
 
-                // Scatter Plot
                 const scatterCanvas = document.getElementById('scatterPlotTest');
                 new Chart(scatterCanvas, {
                     type: 'scatter',
@@ -305,7 +303,6 @@
                     }
                 });
 
-                // Pie Chart
                 const pieCanvas = document.getElementById('pieChartTest');
                 new Chart(pieCanvas, {
                     type: 'pie',
@@ -329,21 +326,18 @@
             const results = [];
 
             try {
-                // Test 1: Connection
+
                 const conn = await fetch(FUNCTION_URL, { method: 'HEAD' });
                 results.push(`✓ Connection test: ${conn.status}`);
 
-                // Test 2: Basic call
                 const basic = await fetch(FUNCTION_URL);
                 const basicData = await basic.json();
                 results.push(`✓ Basic API call: ${Object.keys(basicData).length} fields received`);
 
-                // Test 3: Data structure
                 const required = ['barData', 'scatterData', 'pieData', 'heatmapData', 'executionTime'];
                 const valid = required.filter(f => f in basicData).length;
                 results.push(`✓ Data structure: ${valid}/${required.length} fields valid`);
 
-                // Test 4: Chart rendering
                 results.push(`✓ Chart rendering: Attempted`);
 
                 displayOutput('fullOutput', results.join('\n'), 'fullStatus', true, '✓ Full E2E test passed!');
@@ -354,7 +348,6 @@
             }
         }
 
-        // Auto-log page load
         window.addEventListener('load', () => {
             log("API Test Suite loaded. Ready for testing.");
             log(`Azure Function URL: ${FUNCTION_URL}`);
@@ -362,3 +355,4 @@
     </script>
 </body>
 </html>
+
