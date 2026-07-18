@@ -27,10 +27,18 @@ async function fetchInsights() {
     }
 
     console.log("Fetching from URL:", url.toString());
-    const res = await fetch(url);
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
+    
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
+    
     const data = await res.json();
     console.log("Data received:", data);
 
@@ -49,6 +57,7 @@ async function fetchInsights() {
   } catch (err) {
     console.error("Error fetching insights:", err);
     metadataEl.textContent = `Error fetching insights: ${err.message}`;
+    console.error("Full error details:", err);
   }
 }
 
@@ -201,10 +210,12 @@ function renderMetadata(executionTime) {
 
 // Event Listeners for dynamic updates
 btnInsights.addEventListener("click", () => {
+  console.log("Getting nutritional insights...");
   fetchInsights();
 });
 
 dietSelect.addEventListener("change", () => {
+  console.log("Diet type changed to:", dietSelect.value);
   fetchInsights();
 });
 
@@ -213,6 +224,7 @@ let searchTimeout;
 dietSearch.addEventListener("input", () => {
   clearTimeout(searchTimeout);
   searchTimeout = setTimeout(() => {
+    console.log("Search triggered for:", dietSearch.value);
     fetchInsights();
   }, 400); // 400ms debounce
 });
@@ -228,5 +240,6 @@ document.getElementById("btnClusters").addEventListener("click", () => {
 
 // initial load
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("Dashboard loaded. Fetching initial data...");
   fetchInsights();
 });

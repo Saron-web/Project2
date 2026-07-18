@@ -1,0 +1,21 @@
+{
+  "name": "nutritional-insights-dashboard",
+  "version": "1.0.0",
+  "description": "Frontend dashboard for nutritional insights with dynamic charts",
+  "main": "fronted/script.js",
+  "scripts": {
+    "start": "python -m http.server 8000 --directory fronted",
+    "test": "echo 'Manual testing required'"
+  },
+  "keywords": [
+    "nutrition",
+    "dashboard",
+    "charts",
+    "azure"
+  ],
+  "author": "Person 3",
+  "license": "MIT",
+  "dependencies": {
+    "chart.js": "^3.9.1"
+  }
+}
