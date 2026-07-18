@@ -7,6 +7,26 @@
     <title>Nutritional Insights</title>
     <!-- Tailwind CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+      /* Chart card layout helpers */
+      .chart-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .chart-card .chart-body {
+        width: 100%;
+      }
+      .chart-card canvas {
+        max-height: calc(100% - 3.5rem); /* leave room for title/legend */
+        max-width: 100%;
+        display: block;
+        margin: 0 auto;
+      }
+      /* Ensure heatmap fits inside the card */
+      #heatmap { max-height: 100%; width: 100%; box-sizing: border-box; }
+    </style>
 </head>
 
 <body class="bg-gray-100">
@@ -19,25 +39,25 @@
         <section class="mb-8">
             <h2 class="text-2xl font-semibold mb-4">Explore Nutritional Insights</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="bg-white p-4 shadow-lg rounded-lg" style="height:12rem;">
+                        <div class="bg-white p-4 shadow-lg rounded-lg chart-card" style="height:12rem;">
                     <h3 class="font-semibold">Bar Chart</h3>
                     <p class="text-sm text-gray-600">Average macronutrient content by diet type.</p>
                     <canvas id="barChart" class="w-full" style="height:100%; width:100%;"></canvas>
                 </div>
 
-                <div class="bg-white p-4 shadow-lg rounded-lg" style="height:12rem;">
+                <div class="bg-white p-4 shadow-lg rounded-lg chart-card" style="height:12rem;">
                     <h3 class="font-semibold">Scatter Plot</h3>
                     <p class="text-sm text-gray-600">Nutrient relationships (e.g., protein vs carbs).</p>
                     <canvas id="scatterPlot" class="w-full" style="height:100%; width:100%;"></canvas>
                 </div>
 
-                <div class="bg-white p-4 shadow-lg rounded-lg" style="height:12rem;">
+                <div class="bg-white p-4 shadow-lg rounded-lg chart-card" style="height:12rem;">
                     <h3 class="font-semibold">Heatmap</h3>
                     <p class="text-sm text-gray-600">Nutrient correlations.</p>
                     <div id="heatmap" class="w-full h-full overflow-auto"></div>
                 </div>
 
-                <div class="bg-white p-4 shadow-lg rounded-lg" style="height:12rem;">
+                <div class="bg-white p-4 shadow-lg rounded-lg chart-card" style="height:12rem;">
                     <h3 class="font-semibold">Pie Chart</h3>
                     <p class="text-sm text-gray-600">Recipe distribution by diet type.</p>
                     <canvas id="pieChart" class="w-full" style="height:100%; width:100%;"></canvas>
