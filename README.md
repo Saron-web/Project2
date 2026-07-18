@@ -199,8 +199,8 @@ Project2/
 | Dynamic Charts | ✅ Complete | Bar, Scatter, Pie, Heatmap charts |
 | JSON Data Handling | ✅ Complete | Proper error handling and data formatting |
 | Azure Deployment Config | ✅ Complete | staticwebapp.config.json and GitHub Actions |
-| Live Dashboard URL | 📋 To Document | Deploy and update here |
-| E2E Testing | 📋 To Verify | Follow testing checklist above |
+| Live Dashboard URL | ✅ Deployed | https://gentle-bush-041c4050f.7.azurestaticapps.net |
+| E2E Testing | ✅ Verified | Dashboard loads, API calls succeed, charts render correctly |
 
 ## Contact & Support
 
@@ -208,5 +208,5 @@ For questions about the deployment or technical issues, refer to the Azure Stati
 
 ---
 
-**Last Updated**: 2026-07-17
-**Deployed To**: (Update with live URL after deployment)
+**Last Updated**: 2026-07-18
+**Deployed To**: https://gentle-bush-041c4050f.7.azurestaticapps.net
