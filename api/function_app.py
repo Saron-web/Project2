@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 import azure.functions as func
 import pandas as pd
-from azure.cosmos import CosmosClient, PartitionKey
+import redis
 from azure.storage.blob import BlobServiceClient
 
 app = func.FunctionApp()
@@ -15,28 +15,28 @@ app = func.FunctionApp()
 # Configuration (all read from Function App Application Settings at runtime)
 # ---------------------------------------------------------------------------
 STORAGE_CONNECTION = os.environ["AzureWebJobsStorage"]
-COSMOS_ENDPOINT = os.environ["COSMOS_ENDPOINT"]
-COSMOS_KEY = os.environ["COSMOS_KEY"]
-COSMOS_DB_NAME = os.environ.get("COSMOS_DB_NAME", "DietInsightsDB")
-COSMOS_CONTAINER_NAME = os.environ.get("COSMOS_CONTAINER_NAME", "Insights")
+REDIS_HOST = os.environ["REDIS_HOST"]
+REDIS_KEY = os.environ["REDIS_KEY"]
+REDIS_PORT = int(os.environ.get("REDIS_PORT", "6380"))  # 6380 = SSL port
 
 DATA_CONTAINER = "data"
 RAW_BLOB_NAME = "All_Diets.csv"
 CLEAN_BLOB_NAME = "All_Diets_clean.csv"
-CACHE_DOC_ID = "latest"
+CACHE_KEY = "insights:latest"
 
 NUMERIC_COLS = ["Protein(g)", "Carbs(g)", "Fat(g)"]
 TEXT_COLS = ["Diet_type", "Recipe_name", "Cuisine_type"]
 
 
-def _cosmos_container():
-    """Get (or create) the Cosmos container used to store cached insights."""
-    client = CosmosClient(COSMOS_ENDPOINT, COSMOS_KEY)
-    db = client.create_database_if_not_exists(COSMOS_DB_NAME)
-    return db.create_container_if_not_exists(
-        id=COSMOS_CONTAINER_NAME,
-        partition_key=PartitionKey(path="/id"),
-        offer_throughput=400,
+def _redis_client() -> redis.Redis:
+    """Connect to Azure Cache for Redis over SSL."""
+    return redis.Redis(
+        host=REDIS_HOST,
+        port=REDIS_PORT,
+        password=REDIS_KEY,
+        ssl=True,
+        decode_responses=True,
+        socket_connect_timeout=5,
     )
 
 
@@ -117,11 +117,11 @@ def clean_and_cache_diets(myblob: func.InputStream) -> None:
     )
     logging.info("Wrote %s (%d rows)", CLEAN_BLOB_NAME, len(clean_df))
 
-    # Compute chart-ready aggregates once, cache them in Cosmos DB
+    # Compute chart-ready aggregates once, cache them in Redis
     insights = compute_insights(clean_df)
-    container = _cosmos_container()
-    container.upsert_item({"id": CACHE_DOC_ID, **insights})
-    logging.info("Cached insights to Cosmos DB (recordCount=%d)", insights["recordCount"])
+    r = _redis_client()
+    r.set(CACHE_KEY, json.dumps(insights))
+    logging.info("Cached insights to Redis (recordCount=%d)", insights["recordCount"])
 
 
 # ---------------------------------------------------------------------------
@@ -134,9 +134,12 @@ def get_nutritional_insights(req: func.HttpRequest) -> func.HttpResponse:
     start = datetime.now(timezone.utc)
 
     try:
-        container = _cosmos_container()
-        item = container.read_item(item=CACHE_DOC_ID, partition_key=CACHE_DOC_ID)
-    except Exception as exc:  # cache empty / Cosmos not reachable yet
+        r = _redis_client()
+        raw = r.get(CACHE_KEY)
+        if raw is None:
+            raise ValueError("cache empty")
+        item = json.loads(raw)
+    except Exception as exc:  # cache empty / Redis not reachable yet
         logging.warning("Cache read failed: %s", exc)
         return func.HttpResponse(
             json.dumps(
@@ -158,6 +161,7 @@ def get_nutritional_insights(req: func.HttpRequest) -> func.HttpResponse:
         "heatmapData": item["heatmapData"],
         "recordCount": item["recordCount"],
         "cachedAt": item["computedAt"],
+
         "executionTime": f"{elapsed_ms:.1f}ms (served from cache, no recompute)",
     }
     return func.HttpResponse(json.dumps(response_body), status_code=200, mimetype="application/json")
