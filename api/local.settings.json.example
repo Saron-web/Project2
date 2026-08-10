@@ -1,0 +1,11 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "<your storage account connection string>",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "COSMOS_ENDPOINT": "<your Cosmos DB account URI>",
+    "COSMOS_KEY": "<your Cosmos DB primary key>",
+    "COSMOS_DB_NAME": "DietInsightsDB",
+    "COSMOS_CONTAINER_NAME": "Insights"
+  }
+}

@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.python_packages/
+bin/
+obj/
+
+# Secrets - never commit
+local.settings.json
+
+# Azurite local emulator artifacts
+__blobstorage__/
+__queuestorage__/
+__azurite_db*__.json
