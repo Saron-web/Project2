@@ -1,4 +1,4 @@
-﻿const FUNCTION_URL = "https://diet-insights-func-flex-20260810.azurewebsites.net/api/get_nutritional_insights";
+const FUNCTION_URL = "https://diet-insights-func-20260811-plan.azurewebsites.net/api/get_nutritional_insights";
 const barCanvas = document.getElementById("barChart");
 const scatterCanvas = document.getElementById("scatterPlot");
 const pieCanvas = document.getElementById("pieChart");
