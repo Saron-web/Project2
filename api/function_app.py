@@ -130,7 +130,7 @@ def clean_and_cache_diets(myblob: func.InputStream) -> None:
 # never re-reads or re-cleans the raw CSV on a normal request.
 # ---------------------------------------------------------------------------
 @app.function_name(name="get_nutritional_insights")
-@app.route(route="get_nutritional_insights", methods=["GET"])
+@app.route(route="get_nutritional_insights", methods=["GET"], auth_level=func.AuthLevel.ANONYMOUS)
 def get_nutritional_insights(req: func.HttpRequest) -> func.HttpResponse:
     start = datetime.now(timezone.utc)
 
