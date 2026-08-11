@@ -48,4 +48,4 @@ jobs:
             --data-binary @function-app.zip \
             -H "Content-Type: application/octet-stream" \
             --fail \
-            --show-error
+            --show-error  
