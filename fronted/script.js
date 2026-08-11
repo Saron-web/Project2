@@ -1,3 +1,93 @@
+/* =============================================================================
+   AUTH ADDITIONS — Group 3 (Security & Authentication)
+   Redirects to login.html if no token, validates session, injects user bar.
+   ============================================================================= */
+
+(function () {
+  const API_BASE = "https://diet-insights-func-20260811-plan.azurewebsites.net/api";
+
+  const token = localStorage.getItem("authToken");
+  const email = localStorage.getItem("userEmail");
+
+  if (!token) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  fetch(`${API_BASE}/get_me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+    .then((res) => {
+      if (!res.ok) {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userEmail");
+        window.location.href = "login.html";
+      }
+    })
+    .catch(() => {
+      // Network hiccup — don't force logout, proceed with cached session.
+    });
+
+  function renderUserBar() {
+    const bar = document.createElement("div");
+    bar.id = "user-session-bar";
+    bar.style.cssText = `
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 0.85rem;
+      color: #f1f5f9;
+      z-index: 1000;
+    `;
+    const emailSpan = document.createElement("span");
+    emailSpan.textContent = email || "";
+    const logoutBtn = document.createElement("button");
+    logoutBtn.textContent = "Log out";
+    logoutBtn.style.cssText = `
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    `;
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("userEmail");
+      window.location.href = "login.html";
+    });
+    bar.appendChild(emailSpan);
+    bar.appendChild(logoutBtn);
+    document.body.appendChild(bar);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", renderUserBar);
+  } else {
+    renderUserBar();
+  }
+
+  window.authFetch = function (url, options = {}) {
+    const headers = Object.assign({}, options.headers, {
+      Authorization: `Bearer ${token}`,
+    });
+    return fetch(url, Object.assign({}, options, { headers }));
+  };
+})();
+
+/* =============================================================================
+   GROUP 1 — Dashboard logic (unchanged)
+   ============================================================================= */
+
 const FUNCTION_URL = "https://diet-insights-func-20260811-plan.azurewebsites.net/api/get_nutritional_insights";
 const barCanvas = document.getElementById("barChart");
 const scatterCanvas = document.getElementById("scatterPlot");
@@ -32,11 +122,11 @@ async function fetchInsights() {
         'Content-Type': 'application/json'
       }
     });
-    
+
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
-    
+
     const data = await res.json();
     console.log("Data received:", data);
 
@@ -54,7 +144,6 @@ async function fetchInsights() {
   } catch (err) {
     console.error("Error fetching insights:", err);
     metadataEl.textContent = `Error fetching insights: ${err.message}`;
-    console.error("Full error details:", err);
   }
 }
 
@@ -69,9 +158,9 @@ function renderBarChart(barData) {
         label: "Average Macronutrients",
         data: barData.values,
         backgroundColor: [
-          "rgba(37, 99, 235, 0.7)", // Protein
-          "rgba(245, 158, 11, 0.7)", // Carbs
-          "rgba(16, 185, 129, 0.7)"  // Fat
+          "rgba(37, 99, 235, 0.7)",
+          "rgba(245, 158, 11, 0.7)",
+          "rgba(16, 185, 129, 0.7)"
         ],
         borderColor: [
           "rgb(37, 99, 235)",
@@ -84,18 +173,11 @@ function renderBarChart(barData) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: false
-        }
-      },
+      plugins: { legend: { display: false } },
       scales: {
         y: {
           beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Amount (g)'
-          }
+          title: { display: true, text: 'Amount (g)' }
         }
       }
     }
@@ -105,9 +187,7 @@ function renderBarChart(barData) {
 let scatterChartInstance;
 function renderScatterChart(scatterData) {
   if (scatterChartInstance) scatterChartInstance.destroy();
-
   const points = (scatterData.points || []).map(p => ({ x: p.x, y: p.y }));
-
   scatterChartInstance = new Chart(scatterCanvas, {
     type: "scatter",
     data: {
@@ -124,18 +204,8 @@ function renderScatterChart(scatterData) {
       responsive: true,
       maintainAspectRatio: false,
       scales: {
-        x: {
-          title: {
-            display: true,
-            text: "Protein (g)"
-          }
-        },
-        y: {
-          title: {
-            display: true,
-            text: "Carbs (g)"
-          }
-        }
+        x: { title: { display: true, text: "Protein (g)" } },
+        y: { title: { display: true, text: "Carbs (g)" } }
       }
     }
   });
@@ -170,25 +240,19 @@ function renderHeatmap(heatmapData) {
   }
   const labels = ["Calories", "Protein", "Fat"];
   let html = `<table class="w-full h-full text-xs text-center border-collapse">`;
-
   html += `<thead><tr><th class="p-1 border border-gray-300 bg-gray-50"></th>`;
   labels.forEach(label => {
     html += `<th class="p-1 border border-gray-300 bg-gray-50 font-semibold">${label}</th>`;
   });
   html += `</tr></thead><tbody>`;
-
   for (let i = 0; i < heatmapData.length; i++) {
     html += `<tr><td class="p-1 border border-gray-300 bg-gray-50 font-semibold text-left">${labels[i] || `Var ${i + 1}`}</td>`;
     for (let j = 0; j < heatmapData[i].length; j++) {
       const val = heatmapData[i][j];
       const absVal = Math.abs(val);
-
-      let bgColor = "rgba(239, 68, 68, 0)"; // Transparent for 0
-      if (val > 0) {
-        bgColor = `rgba(37, 99, 235, ${absVal})`; // Blue for positive correlation
-      } else {
-        bgColor = `rgba(239, 68, 68, ${absVal})`; // Red for negative correlation
-      }
+      let bgColor = val > 0
+        ? `rgba(37, 99, 235, ${absVal})`
+        : `rgba(239, 68, 68, ${absVal})`;
       const textColor = absVal > 0.5 ? "text-white" : "text-gray-800";
       html += `<td class="p-2 border border-gray-300 ${textColor}" style="background-color: ${bgColor}; font-weight: 500;">${val.toFixed(2)}</td>`;
     }
@@ -202,23 +266,13 @@ function renderMetadata(executionTime) {
   metadataEl.textContent = `Execution time: ${executionTime}`;
 }
 
-btnInsights.addEventListener("click", () => {
-  console.log("Getting nutritional insights...");
-  fetchInsights();
-});
-
-dietSelect.addEventListener("change", () => {
-  console.log("Diet type changed to:", dietSelect.value);
-  fetchInsights();
-});
+btnInsights.addEventListener("click", () => fetchInsights());
+dietSelect.addEventListener("change", () => fetchInsights());
 
 let searchTimeout;
 dietSearch.addEventListener("input", () => {
   clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    console.log("Search triggered for:", dietSearch.value);
-    fetchInsights();
-  }, 400); // 400ms debounce
+  searchTimeout = setTimeout(() => fetchInsights(), 400);
 });
 
 document.getElementById("btnRecipes").addEventListener("click", () => {
@@ -233,4 +287,3 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("Dashboard loaded. Fetching initial data...");
   fetchInsights();
 });
-
