@@ -31,6 +31,7 @@ jobs:
           cd ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           python -m pip install --upgrade pip
           pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+          
 
       - name: Zip package
         shell: bash
@@ -43,7 +44,7 @@ jobs:
         run: |
           curl -X POST \
             "https://diet-insights-func-20260811-plan.scm.azurewebsites.net/api/zipdeploy" \
-            -u "${{ secrets.KUDU_USERNAME }}:${{ secrets.KUDU_PASSWORD }}" \
+            -u '$diet-insights-func-20260811-plan:eZiQhP0hp3e5k8Nsv3akJRtywR8xi1Lqqq9ruPZxzZue3gArq7Cm17ycu61p' \
             --data-binary @function-app.zip \
             -H "Content-Type: application/octet-stream" \
             --fail \
