@@ -1,3 +1,4 @@
+# Deployment marker for api/ push-based GitHub Actions auto-deploys.
 import io
 import json
 import logging
