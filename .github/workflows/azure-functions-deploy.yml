@@ -9,8 +9,8 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_NAME: diet-insights-func-20260811-plan   # <-- set this to your actual Function App name
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'api'              # folder inside the repo holding function_app.py
+  AZURE_FUNCTIONAPP_NAME: diet-insights-func-20260811-plan
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'api'
   PYTHON_VERSION: '3.11'
 
 jobs:
@@ -33,7 +33,7 @@ jobs:
           pip install -r requirements.txt --target=".python_packages/lib/site-packages"
 
       - name: Deploy to Azure Function App
-        uses: Azure/functions-action@v1
+        uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
