@@ -336,3 +336,62 @@ def oauth_callback(req: func.HttpRequest) -> func.HttpResponse:
     frontend_url = os.environ.get("FRONTEND_URL", "/login.html")
     redirect_url = f"{frontend_url}#token={urllib.parse.quote(token)}&email={urllib.parse.quote(email)}"
     return func.HttpResponse(status_code=302, headers={"Location": redirect_url})
+# ---------------------------------------------------------------------------
+# Group 2 — Data Interaction (filter, search, pagination)
+# ---------------------------------------------------------------------------
+
+@app.route(route="recipes", auth_level=func.AuthLevel.ANONYMOUS, methods=["GET"])
+def recipes(req: func.HttpRequest) -> func.HttpResponse:
+    """Diet filter, keyword search, pagination against clean CSV."""
+    try:
+        blob_service = BlobServiceClient.from_connection_string(STORAGE_CONNECTION)
+        blob_client = blob_service.get_blob_client(container=DATA_CONTAINER, blob=CLEAN_BLOB_NAME)
+        clean_bytes = blob_client.download_blob().readall()
+        df = pd.read_csv(io.BytesIO(clean_bytes))
+        data = df.to_dict(orient="records")
+    except Exception as e:
+        logging.error(f"Failed to load clean data: {e}")
+        return json_response({"error": "Clean data not available. Upload All_Diets.csv first."}, 503)
+
+    diet = req.params.get("diet", "").lower()
+    keyword = req.params.get("search", "").lower()
+    page = int(req.params.get("page", 1))
+    page_size = int(req.params.get("page_size", 10))
+
+    if diet and diet != "all":
+        data = [d for d in data if str(d.get("Diet_type", "")).lower() == diet]
+
+    if keyword:
+        data = [d for d in data if keyword in str(d.get("Recipe_name", "")).lower()]
+
+    total = len(data)
+    start = (page - 1) * page_size
+    end = start + page_size
+    results = data[start:end]
+
+    return func.HttpResponse(
+        json.dumps({
+            "page": page,
+            "page_size": page_size,
+            "total_items": total,
+            "total_pages": max(1, (total + page_size - 1) // page_size),
+            "results": results
+        }),
+        status_code=200,
+        mimetype="application/json"
+    )
+
+
+@app.route(route="diet-types", auth_level=func.AuthLevel.ANONYMOUS, methods=["GET"])
+def diet_types(req: func.HttpRequest) -> func.HttpResponse:
+    """Returns all available diet types from clean CSV."""
+    try:
+        blob_service = BlobServiceClient.from_connection_string(STORAGE_CONNECTION)
+        blob_client = blob_service.get_blob_client(container=DATA_CONTAINER, blob=CLEAN_BLOB_NAME)
+        clean_bytes = blob_client.download_blob().readall()
+        df = pd.read_csv(io.BytesIO(clean_bytes))
+        types = sorted(df["Diet_type"].dropna().unique().tolist())
+        return func.HttpResponse(json.dumps(types), status_code=200, mimetype="application/json")
+    except Exception as e:
+        logging.error(f"Failed to load diet types: {e}")
+        return json_response({"error": "Clean data not available."}, 503)
