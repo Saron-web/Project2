@@ -339,4 +339,5 @@ dietSearch.addEventListener("input", () => {
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Dashboard loaded. Fetching initial data...");
   fetchInsights();
+  fetchRecipes(1);
 });
