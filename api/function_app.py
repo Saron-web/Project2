@@ -1,3 +1,4 @@
+import email
 import io
 import json
 import logging
@@ -333,8 +334,8 @@ def oauth_callback(req: func.HttpRequest) -> func.HttpResponse:
         }
         table_client.create_entity(entity=entity)
     token = make_jwt(email)
-    frontend_url = os.environ.get("FRONTEND_URL", "/login.html")
-    redirect_url = f"{frontend_url}#token={urllib.parse.quote(token)}&email={urllib.parse.quote(email)}"
+    frontend_url = os.environ.get("FRONTEND_URL", "")
+    redirect_url = f"{frontend_url}/login.html#token={urllib.parse.quote(token)}&email={urllib.parse.quote(email)}"
     return func.HttpResponse(status_code=302, headers={"Location": redirect_url})
 # ---------------------------------------------------------------------------
 # Group 2 — Data Interaction (filter, search, pagination)
