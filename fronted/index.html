@@ -5,26 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nutritional Insights</title>
-    
+
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
     <style>
-      
-      .chart-card {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-      }
-      .chart-card .chart-body {
-        width: 100%;
-      }
-      .chart-card canvas {
-        max-height: calc(100% - 3.5rem); 
-        max-width: 100%;
-        display: block;
-        margin: 0 auto;
-      }
+        .chart-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
 
+        .chart-card .chart-body {
+            width: 100%;
+        }
+
+        .chart-card canvas {
+            max-height: calc(100% - 3.5rem);
+            max-width: 100%;
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 </head>
 
@@ -38,7 +38,7 @@
         <section class="mb-8">
             <h2 class="text-2xl font-semibold mb-4">Explore Nutritional Insights</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="bg-white p-4 shadow-lg rounded-lg chart-card" style="height:12rem;">
+                <div class="bg-white p-4 shadow-lg rounded-lg chart-card" style="height:12rem;">
                     <h3 class="font-semibold">Bar Chart</h3>
                     <p class="text-sm text-gray-600">Average macronutrient content by diet type.</p>
                     <canvas id="barChart" class="w-full" style="height:100%; width:100%;"></canvas>
@@ -63,7 +63,7 @@
                 </div>
             </div>
 
-            
+
             <p id="metadata" class="text-sm text-gray-600 mt-2"></p>
         </section>
 
@@ -95,11 +95,11 @@
 
         <section>
             <h2 class="text-2xl font-semibold mb-4">Pagination</h2>
-            <div class="flex justify-center gap-2 mt-4">
-                <button class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">Previous</button>
-                <button class="px-3 py-1 bg-blue-600 text-white rounded">1</button>
-                <button class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">2</button>
-                <button class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">Next</button>
+            <div id="recipesTable" class="mb-4 overflow-auto"></div>
+            <div class="flex justify-center gap-2 mt-4" id="paginationControls">
+                <button id="btnPrev" class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">Previous</button>
+                <span id="pageInfo" class="px-3 py-1">Page 1</span>
+                <button id="btnNext" class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">Next</button>
             </div>
         </section>
     </main>
@@ -108,7 +108,7 @@
         <p>&copy; 2025 Nutritional Insights. All Rights Reserved.</p>
     </footer>
 
-    
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="./script.js"></script>
 

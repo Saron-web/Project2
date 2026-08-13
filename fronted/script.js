@@ -267,20 +267,73 @@ function renderMetadata(executionTime) {
 }
 
 btnInsights.addEventListener("click", () => fetchInsights());
-dietSelect.addEventListener("change", () => fetchInsights());
-
-let searchTimeout;
-dietSearch.addEventListener("input", () => {
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => fetchInsights(), 400);
-});
-
-document.getElementById("btnRecipes").addEventListener("click", () => {
-  alert("Recipes functionality is connected and fetched via the dynamic filters dashboard!");
-});
 
 document.getElementById("btnClusters").addEventListener("click", () => {
   alert("Clusters visualization and insights are integrated into the scatter and heatmap diagrams!");
+});
+
+// Group 2 — filter/search/pagination
+const RECIPES_URL = "https://diet-insights-func-20260811-plan.azurewebsites.net/api/recipes";
+let currentPage = 1;
+let searchTimeout;
+
+async function fetchRecipes(page = 1) {
+  const diet = dietSelect.value;
+  const search = dietSearch.value.trim();
+  const url = new URL(RECIPES_URL);
+  if (diet && diet !== "all") url.searchParams.set("diet", diet);
+  if (search) url.searchParams.set("search", search);
+  url.searchParams.set("page", page);
+  url.searchParams.set("page_size", 10);
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    currentPage = data.page;
+
+    const table = document.getElementById("recipesTable");
+    if (!data.results || data.results.length === 0) {
+      table.innerHTML = "<p class='text-sm text-gray-500'>No recipes found.</p>";
+    } else {
+      let html = `<table class="w-full text-sm border-collapse">
+        <thead><tr class="bg-gray-200">
+          <th class="p-2 text-left border">Recipe</th>
+          <th class="p-2 text-left border">Diet</th>
+          <th class="p-2 text-left border">Cuisine</th>
+          <th class="p-2 text-left border">Protein(g)</th>
+          <th class="p-2 text-left border">Carbs(g)</th>
+          <th class="p-2 text-left border">Fat(g)</th>
+        </tr></thead><tbody>`;
+      data.results.forEach(r => {
+        html += `<tr class="border-b hover:bg-gray-50">
+          <td class="p-2 border">${r.Recipe_name || ""}</td>
+          <td class="p-2 border">${r.Diet_type || ""}</td>
+          <td class="p-2 border">${r.Cuisine_type || ""}</td>
+          <td class="p-2 border">${r["Protein(g)"] || ""}</td>
+          <td class="p-2 border">${r["Carbs(g)"] || ""}</td>
+          <td class="p-2 border">${r["Fat(g)"] || ""}</td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+      table.innerHTML = html;
+    }
+
+    document.getElementById("pageInfo").textContent = `Page ${data.page} of ${data.total_pages} (${data.total_items} results)`;
+    document.getElementById("btnPrev").disabled = data.page <= 1;
+    document.getElementById("btnNext").disabled = data.page >= data.total_pages;
+  } catch (err) {
+    console.error("Error fetching recipes:", err);
+  }
+}
+
+document.getElementById("btnPrev").addEventListener("click", () => fetchRecipes(currentPage - 1));
+document.getElementById("btnNext").addEventListener("click", () => fetchRecipes(currentPage + 1));
+document.getElementById("btnRecipes").addEventListener("click", () => fetchRecipes(1));
+
+dietSelect.addEventListener("change", () => { fetchRecipes(1); fetchInsights(); });
+dietSearch.addEventListener("input", () => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => { fetchRecipes(1); fetchInsights(); }, 400);
 });
 
 document.addEventListener("DOMContentLoaded", () => {
